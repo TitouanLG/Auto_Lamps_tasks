@@ -1,0 +1,12 @@
+__--  LAMP_CADENCED_TASK  --__
+Current date is:2022-01-16 18:40:04.336794
+Today is a:Dimanche
+Last State is:1
+..DB ouverte
+Today Morning Start date is :0001-01-01 00:00:00
+Today Morning Stop date is :0001-01-01 00:00:00
+Today Evening Start date is :0001-01-01 17:45:00
+Today Evening Stop date is :0001-01-01 20:00:00
+Lamps ON
+__                          __
+  --         END          --  
