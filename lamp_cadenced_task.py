@@ -7,7 +7,7 @@
 #######################
 
 #######################
-#       NOTES
+#      DEV NOTES
 #  weekday()
 #
 
@@ -25,6 +25,7 @@ import sqlite3
 #24 = P3
 LAMP_PIN = 22
 NC = 1
+weekDays = ("Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche")
 
 #######################
 ## Fonctions locales
@@ -45,12 +46,14 @@ time.sleep(3)
 ## Globals Variables
 lamp_last_state = GPIO.input(LAMP_PIN)
 
-
 #######################
 ## MAIN SCRIPT
 print("__--  LAMP_CADENCED_TASK  --__")
 current_date = datetime.now()
+current_day = current_date.weekday()
+current_day_str = weekDays[current_day]
 print("Current date is:" +str(current_date))
+print("Today is a:" +current_day_str)
 print("Last State is:" +str(lamp_last_state))
 
 #Recuperation des horaires et init de la DB
@@ -85,25 +88,29 @@ finally:
 
 
 ## Getting hours for sunrise
-cursor_DB.execute("""SELECT start_h_morning , start_m_morning FROM horairesLamp WHERE day = 'Lundi'""")
+DB_request = """SELECT day, start_h_morning , start_m_morning FROM horairesLamp WHERE day = """ +"'" +current_day_str +"'"
+cursor_DB.execute(DB_request)
 raw_date = cursor_DB.fetchone()
-morning_start_date = datetime(NC,NC,NC,raw_date[0],raw_date[1],0)
+morning_start_date = datetime(NC,NC,NC,raw_date[1],raw_date[2],0)
 print('Today Morning Start date is :' +str(morning_start_date))
 
-cursor_DB.execute("""SELECT stop_h_morning , stop_m_morning FROM horairesLamp WHERE day = 'Lundi'""")
+DB_request = """SELECT day, stop_h_morning , stop_m_morning FROM horairesLamp WHERE day = """ +"'" +current_day_str +"'"
+cursor_DB.execute(DB_request)
 raw_date = cursor_DB.fetchone()
-morning_stop_date = datetime(NC,NC,NC,raw_date[0],raw_date[1],0)
+morning_stop_date = datetime(NC,NC,NC,raw_date[1],raw_date[2],0)
 print('Today Morning Stop date is :' +str(morning_stop_date))
 
 ## Getting hours for sunset
-cursor_DB.execute("""SELECT start_h_evening , start_m_evening FROM horairesLamp WHERE day = 'Lundi'""")
+DB_request = """SELECT day, start_h_evening , start_m_evening FROM horairesLamp WHERE day = """ +"'" +current_day_str +"'"
+cursor_DB.execute(DB_request)
 raw_date = cursor_DB.fetchone()
-evening_start_date = datetime(NC,NC,NC,raw_date[0],raw_date[1],0)
+evening_start_date = datetime(NC,NC,NC,raw_date[1],raw_date[2],0)
 print('Today Evening Start date is :' +str(evening_start_date))
 
-cursor_DB.execute("""SELECT stop_h_evening , stop_m_evening FROM horairesLamp WHERE day = 'Lundi'""")
+DB_request = """SELECT day, stop_h_evening , stop_m_evening FROM horairesLamp WHERE day = """ +"'" +current_day_str +"'"
+cursor_DB.execute(DB_request)
 raw_date = cursor_DB.fetchone()
-evening_stop_date = datetime(NC,NC,NC,raw_date[0],raw_date[1],0)
+evening_stop_date = datetime(NC,NC,NC,raw_date[1],raw_date[2],0)
 print('Today Evening Stop date is :' +str(evening_stop_date))
 
 conn_DB.close()
