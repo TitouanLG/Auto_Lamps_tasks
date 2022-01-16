@@ -56,21 +56,55 @@ print("Last State is:" +str(lamp_last_state))
 #Recuperation des horaires et init de la DB
 conn_DB = sqlite3.connect('Tasks.db')
 cursor_DB = conn_DB.cursor()
-cursor_DB.execute("""
-CREATE TABLE IF NOT EXISTS horairesLamp(
-     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-     day TEXT,
-     start_h_morning INTEGER,
-     start_m_morning INTEGER,
-     stop_h_morning INTEGER,
-     stop_m_morning INTEGER,
-     start_h_evening INTEGER,
-     start_m_evening INTEGER,
-     stop_h_evening INTEGER,
-     stop_m_evening INTEGER
-)
-""")
-conn_DB.commit()
+
+try:
+    cursor_DB.execute("""
+    CREATE TABLE IF NOT EXISTS horairesLamp(
+        id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+        day TEXT,
+        start_h_morning INTEGER,
+        start_m_morning INTEGER,
+        stop_h_morning INTEGER,
+        stop_m_morning INTEGER,
+        start_h_evening INTEGER,
+        start_m_evening INTEGER,
+        stop_h_evening INTEGER,
+        stop_m_evening INTEGER
+    )
+    """)
+    conn_DB.commit()
+
+except sqlite3.OperationalError:
+    print('Erreur la table existe déjà')
+
+except Exception as e:
+    print("Erreur globale sur la Tasks.DB")
+
+finally:
+    print("..DB ouverte")
+
+
+## Getting hours for sunrise
+cursor.execute("""SELECT start_h_morning , start_m_morning FROM horairesLamp WHERE day = 'Lundi'""")
+raw_date = cursor.fetchone()
+morning_start_date = datetime(NC,NC,NC,raw_date[0],raw_date[1],0)
+print('Today Morning Start date is :' +str(morning_start_date))
+
+cursor.execute("""SELECT stop_h_morning , stop_m_morning FROM horairesLamp WHERE day = 'Lundi'""")
+raw_date = cursor.fetchone()
+morning_stop_date = datetime(NC,NC,NC,raw_date[0],raw_date[1],0)
+print('Today Morning Stop date is :' +str(morning_stop_date))
+
+## Getting hours for sunset
+cursor.execute("""SELECT start_h_evening , start_m_evening FROM horairesLamp WHERE day = 'Lundi'""")
+raw_date = cursor.fetchone()
+evening_start_date = datetime(NC,NC,NC,raw_date[0],raw_date[1],0)
+print('Today Evening Start date is :' +str(evening_start_date))
+
+cursor.execute("""SELECT stop_h_evening , stop_m_evening FROM horairesLamp WHERE day = 'Lundi'""")
+raw_date = cursor.fetchone()
+evening_stop_date = datetime(NC,NC,NC,raw_date[0],raw_date[1],0)
+print('Today Evening Stop date is :' +str(evening_stop_date))
 
 conn_DB.close()
 
