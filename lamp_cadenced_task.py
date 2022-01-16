@@ -60,19 +60,19 @@ cursor_DB.execute("""
 CREATE TABLE IF NOT EXISTS horairesLamp(
      id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
      day TEXT,
-     start_h_morning INTERGER,
-     start_m_morning INTERGER,
-     stop_h_morning INTERGER,
-     stop_m_morning INTERGER,
-     start_h_evening INTERGER,
-     start_m_evening INTERGER,
-     stop_h_evening INTERGER,
-     stop_m_evening INTERGER
+     start_h_morning INTEGER,
+     start_m_morning INTEGER,
+     stop_h_morning INTEGER,
+     stop_m_morning INTEGER,
+     start_h_evening INTEGER,
+     start_m_evening INTEGER,
+     stop_h_evening INTEGER,
+     stop_m_evening INTEGER
 )
 """)
 conn_DB.commit()
 
-db.close()
+conn_DB.close()
 
 #Allumage conditionel matin
 if(day_to_sec(current_date) >= day_to_sec(morning_start_date)) \
