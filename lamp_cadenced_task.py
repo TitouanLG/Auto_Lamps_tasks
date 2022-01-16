@@ -85,24 +85,24 @@ finally:
 
 
 ## Getting hours for sunrise
-cursor.execute("""SELECT start_h_morning , start_m_morning FROM horairesLamp WHERE day = 'Lundi'""")
-raw_date = cursor.fetchone()
+cursor_DB.execute("""SELECT start_h_morning , start_m_morning FROM horairesLamp WHERE day = 'Lundi'""")
+raw_date = cursor_DB.fetchone()
 morning_start_date = datetime(NC,NC,NC,raw_date[0],raw_date[1],0)
 print('Today Morning Start date is :' +str(morning_start_date))
 
-cursor.execute("""SELECT stop_h_morning , stop_m_morning FROM horairesLamp WHERE day = 'Lundi'""")
-raw_date = cursor.fetchone()
+cursor_DB.execute("""SELECT stop_h_morning , stop_m_morning FROM horairesLamp WHERE day = 'Lundi'""")
+raw_date = cursor_DB.fetchone()
 morning_stop_date = datetime(NC,NC,NC,raw_date[0],raw_date[1],0)
 print('Today Morning Stop date is :' +str(morning_stop_date))
 
 ## Getting hours for sunset
-cursor.execute("""SELECT start_h_evening , start_m_evening FROM horairesLamp WHERE day = 'Lundi'""")
-raw_date = cursor.fetchone()
+cursor_DB.execute("""SELECT start_h_evening , start_m_evening FROM horairesLamp WHERE day = 'Lundi'""")
+raw_date = cursor_DB.fetchone()
 evening_start_date = datetime(NC,NC,NC,raw_date[0],raw_date[1],0)
 print('Today Evening Start date is :' +str(evening_start_date))
 
-cursor.execute("""SELECT stop_h_evening , stop_m_evening FROM horairesLamp WHERE day = 'Lundi'""")
-raw_date = cursor.fetchone()
+cursor_DB.execute("""SELECT stop_h_evening , stop_m_evening FROM horairesLamp WHERE day = 'Lundi'""")
+raw_date = cursor_DB.fetchone()
 evening_stop_date = datetime(NC,NC,NC,raw_date[0],raw_date[1],0)
 print('Today Evening Stop date is :' +str(evening_stop_date))
 
