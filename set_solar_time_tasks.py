@@ -9,13 +9,13 @@
 
 #######################
 #      DEV NOTES
-# 
-#
+#  Rajouter des lignes (ou autre)
+#  pour activer le matin / soir
+#  par des booleans
 
 
 #######################
 ## Import externe
-import RPi.GPIO as GPIO
 from datetime import datetime
 import time
 import sqlite3
@@ -92,20 +92,23 @@ finally:
 
 ## Setting hours for sunrise
 DB_request = """UPDATE horairesLamp 
-    SET stop_h_morning = """ +"'" +sun_rise.hour +"'" """,
-        stop_m_morning = """ +"'" +sun_rise.minute +"'" """,
-        WHERE day = """ +"'" +current_day_str +"'"
-cursor_DB.execute(DB_request)
+    SET stop_h_morning = """ +str(sun_rise.hour) +""",
+        stop_m_morning = """ +str(sun_rise.minute) +"""
+    WHERE day = """ +"'" +current_day_str +"'"
+print(DB_request)
+print(cursor_DB.execute(DB_request))
 print('Today Morning Stop date is :' +str(sun_rise))
 
 ## Setting hours for sunset
 DB_request = """UPDATE horairesLamp 
-    SET start_h_evening = """ +"'" +sun_dusk.hour +"'" """,
-        start_m_evening = """ +"'" +sun_dusk.minute +"'" """,
-        WHERE day = """ +"'" +current_day_str +"'"
-cursor_DB.execute(DB_request)
+    SET start_h_evening = """ +str(sun_dusk.hour) +""",
+        start_m_evening = """ +str(sun_dusk.minute) +"""
+    WHERE day = """ +"'" +current_day_str +"'"
+print(DB_request)
+print(cursor_DB.execute(DB_request))
 print('Today evening Start date is :' +str(sun_dusk))
 
+conn_DB.commit()
 conn_DB.close()
 
 print("__                          __")
