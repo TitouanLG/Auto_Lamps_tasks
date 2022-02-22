@@ -33,12 +33,120 @@ geolocator = Nominatim(user_agent="geoapiExercises")
 
 #######################
 ## Init
-#GPIO.setwarnings(False)
 
 time.sleep(3)
 
 #######################
 ## Globals Variables
+
+#######################
+## Globals Functions
+def sql_create_horairesLamp_table(conn, cursor):
+    try:
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS horairesLamp(
+            id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+            day TEXT,
+            start_h_morning INTEGER,
+            start_m_morning INTEGER,
+            stop_h_morning INTEGER,
+            stop_m_morning INTEGER,
+            start_h_evening INTEGER,
+            start_m_evening INTEGER,
+            stop_h_evening INTEGER,
+            stop_m_evening INTEGER
+        )
+        """)
+        conn.commit()
+
+    except sqlite3.OperationalError:
+        print('Info: la table hoariresLamp existe déjà')
+        return True
+
+    except Exception as e:
+        print("Erreur globale sur la Tasks.DB")
+        return False
+
+    finally:
+        print("..DB ouverte")
+        return True
+
+def sql_create_joursLamp_table(conn, cursor):
+    #creating table joursLamp..
+    try:
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS joursLamp(
+            id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+            day TEXT,
+            morning INTEGER,
+            evening INTEGER,
+        )
+        """)
+        conn.commit()
+
+    except sqlite3.OperationalError:
+        print('Info: la table joursLamp existe déjà')
+        return True
+
+    except Exception as e:
+        print("Erreur globale sur la Tasks.DB")
+        return False
+
+    finally:
+        print("..table joursLamp newly created !")
+        try:
+            cursor.execute("""
+            INSERT INTO joursLamp (day,morning,evening)
+                VALUES(Lundi,1,1)
+            )
+            """)
+
+            cursor.execute("""
+            INSERT INTO joursLamp (day,morning,evening)
+                VALUES(Mardi,1,1)
+            )
+            """)
+
+            cursor.execute("""
+            INSERT INTO joursLamp (day,morning,evening)
+                VALUES(Mercredi,1,1)
+            )
+            """)
+
+            cursor.execute("""
+            INSERT INTO joursLamp (day,morning,evening)
+                VALUES(Jeudi,1,1)
+            )
+            """)
+
+            cursor.execute("""
+            INSERT INTO joursLamp (day,morning,evening)
+                VALUES(Vendredi,1,1)
+            )
+            """)
+
+            cursor.execute("""
+            INSERT INTO joursLamp (day,morning,evening)
+                VALUES(Samedi,1,1)
+            )
+            """)
+
+            cursor.execute("""
+            INSERT INTO joursLamp (day,morning,evening)
+                VALUES(Dimanche,1,1)
+            )
+            """)
+            conn.commit()
+
+        except sqlite3.OperationalError:
+            print('Info: la table joursLamp est deja peuplee')
+
+        except Exception as e:
+            print("Erreur globale sur la Tasks.DB")
+
+        finally:
+            print("..7 lines added into joursLamp!")
+
 
 #######################
 ## MAIN SCRIPT
@@ -63,35 +171,11 @@ print("Sunset  = " +sun_dusk.strftime('%H:%M'))
 conn_DB = sqlite3.connect('Tasks.db')
 cursor_DB = conn_DB.cursor()
 
-try:
-    cursor_DB.execute("""
-    CREATE TABLE IF NOT EXISTS horairesLamp(
-        id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-        day TEXT,
-        start_h_morning INTEGER,
-        start_m_morning INTEGER,
-        stop_h_morning INTEGER,
-        stop_m_morning INTEGER,
-        start_h_evening INTEGER,
-        start_m_evening INTEGER,
-        stop_h_evening INTEGER,
-        stop_m_evening INTEGER
-    )
-    """)
-    conn_DB.commit()
-
-except sqlite3.OperationalError:
-    print('Erreur la table existe déjà')
-
-except Exception as e:
-    print("Erreur globale sur la Tasks.DB")
-
-finally:
-    print("..DB ouverte")
-
+sql_create_horairesLamp_table(conn_DB, cursor_DB)
+sql_create_joursLamp_table(conn_DB, cursor_DB)
 
 ## Setting hours for sunrise
-DB_request = """UPDATE horairesLamp 
+DB_request = """UPDATE horairesLamp
     SET stop_h_morning = """ +str(sun_rise.hour) +""",
         stop_m_morning = """ +str(sun_rise.minute) +"""
     WHERE day = """ +"'" +current_day_str +"'"
@@ -113,6 +197,8 @@ conn_DB.close()
 
 print("__                          __")
 print("  --         END          --  ")
+
+
 
 
     
