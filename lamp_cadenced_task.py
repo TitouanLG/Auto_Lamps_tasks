@@ -31,7 +31,6 @@ weekDays = ("Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche")
 ## Fonctions locales
 def day_to_sec(day_obj):
     sec = 0
-    #sec = int(str(day_obj.hour)) + int(str(day_obj.min)) + int(str(day_obj.sec))
     sec = day_obj.hour*3600 +day_obj.minute*60 +day_obj.second
     return sec
 
@@ -78,7 +77,7 @@ try:
     conn_DB.commit()
 
 except sqlite3.OperationalError:
-    print('Erreur la table existe déjà')
+    print('Erreur la table existe deja')
 
 except Exception as e:
     print("Erreur globale sur la Tasks.DB")
@@ -88,6 +87,12 @@ finally:
 
 
 ## Getting hours for sunrise
+DB_request = """SELECT day , morning , evening FROM joursLamp WHERE day = """ +"'" +current_day_str +"'"
+cursor_DB.execute(DB_request)
+raw_light_needed = cursor_DB.fetchone()
+morning_light_needed = int(raw_light_needed[1])
+evening_light_needed = int(raw_light_needed[2])
+
 DB_request = """SELECT day, start_h_morning , start_m_morning FROM horairesLamp WHERE day = """ +"'" +current_day_str +"'"
 cursor_DB.execute(DB_request)
 raw_date = cursor_DB.fetchone()
@@ -118,22 +123,28 @@ conn_DB.close()
 #Allumage conditionel matin
 if(day_to_sec(current_date) >= day_to_sec(morning_start_date)) \
     and (day_to_sec(current_date) <= day_to_sec(morning_stop_date)):
-    print("Lamps ON")
-    GPIO.output(LAMP_PIN, GPIO.HIGH)
-    if(lamp_last_state == False):
-        print("Setting Lamps ON !")
-    lamp_last_state = True
-    time.sleep(1)
+    if(morning_light_needed):
+        print("Lamps ON needed")
+        GPIO.output(LAMP_PIN, GPIO.HIGH)
+        if(lamp_last_state == False):
+            print("Setting Lamps ON !")
+        lamp_last_state = True
+        time.sleep(1)
+    else:
+        print("Lamps not today")
 
 #Allumage conditionel soir
 elif(day_to_sec(current_date) >= day_to_sec(evening_start_date)) \
-   and (day_to_sec(current_date) <= day_to_sec(evening_stop_date)):
-    print("Lamps ON")
-    GPIO.output(LAMP_PIN, GPIO.HIGH)
-    if(lamp_last_state == False):
-        print("Setting Lamps ON !")
-    lamp_last_state = True
-    time.sleep(1)
+    and (day_to_sec(current_date) <= day_to_sec(evening_stop_date)):
+    if(evening_light_needed):
+        print("Lamps ON needed")
+        PIO.output(LAMP_PIN, GPIO.HIGH)
+        if(lamp_last_state == False):
+            print("Setting Lamps ON !")
+        lamp_last_state = True
+        time.sleep(1)
+    else:
+        print("Lamps not today")
 
 else:
     print("lamps OFF")
