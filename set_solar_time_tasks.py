@@ -16,7 +16,7 @@
 
 #######################
 ## Import externe
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 import sqlite3
 from suntime import Sun 
@@ -64,6 +64,7 @@ def sql_create_horairesLamp_table(conn, cursor):
         return True
 
     except Exception as e:
+        print(e)
         print("Erreur globale sur la Tasks.DB")
         return False
 
@@ -79,16 +80,17 @@ def sql_create_joursLamp_table(conn, cursor):
             id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             day TEXT,
             morning INTEGER,
-            evening INTEGER,
+            evening INTEGER
         )
         """)
         conn.commit()
 
     except sqlite3.OperationalError:
-        print('Info: la table joursLamp existe déjà')
+        print('Info: la table joursLamp existe deja')
         return True
 
     except Exception as e:
+        print(e)
         print("Erreur globale sur la Tasks.DB")
         return False
 
@@ -97,44 +99,14 @@ def sql_create_joursLamp_table(conn, cursor):
         try:
             cursor.execute("""
             INSERT INTO joursLamp (day,morning,evening)
-                VALUES(Lundi,1,1)
-            )
-            """)
-
-            cursor.execute("""
-            INSERT INTO joursLamp (day,morning,evening)
-                VALUES(Mardi,1,1)
-            )
-            """)
-
-            cursor.execute("""
-            INSERT INTO joursLamp (day,morning,evening)
-                VALUES(Mercredi,1,1)
-            )
-            """)
-
-            cursor.execute("""
-            INSERT INTO joursLamp (day,morning,evening)
-                VALUES(Jeudi,1,1)
-            )
-            """)
-
-            cursor.execute("""
-            INSERT INTO joursLamp (day,morning,evening)
-                VALUES(Vendredi,1,1)
-            )
-            """)
-
-            cursor.execute("""
-            INSERT INTO joursLamp (day,morning,evening)
-                VALUES(Samedi,1,1)
-            )
-            """)
-
-            cursor.execute("""
-            INSERT INTO joursLamp (day,morning,evening)
-                VALUES(Dimanche,1,1)
-            )
+                VALUES
+                    (Lundi,1,1),
+                    (Mardi,1,1),
+                    (Mercredi,1,1),
+                    (Jeudi,1,1),
+                    (Vendredi,1,1),
+                    (Samedi,1,1),
+                    (Dimanche,1,1);
             """)
             conn.commit()
 
@@ -151,7 +123,7 @@ def sql_create_joursLamp_table(conn, cursor):
 #######################
 ## MAIN SCRIPT
 print("__--  SET_SOLAR_TIME_TASK  --__")
-#Getting current position latitude and longitude
+# Getting current position latitude and longitude
 home_location = geolocator.geocode("Rodez")
 sun_info = Sun(home_location.latitude, home_location.longitude)
 
@@ -167,14 +139,17 @@ print("Today is a:" +current_day_str)
 print("Sunrise = " +sun_rise.strftime('%H:%M'))
 print("Sunset  = " +sun_dusk.strftime('%H:%M'))
 
-#Recuperation des horaires et init de la DB
+# Recuperation des horaires et init de la DB
 conn_DB = sqlite3.connect('Tasks.db')
 cursor_DB = conn_DB.cursor()
 
-sql_create_horairesLamp_table(conn_DB, cursor_DB)
-sql_create_joursLamp_table(conn_DB, cursor_DB)
+# Only for the DB creation :
+#sql_create_horairesLamp_table(conn_DB, cursor_DB)
+#sql_create_joursLamp_table(conn_DB, cursor_DB)
 
 ## Setting hours for sunrise
+time_offset = timedelta(hours = 0, minutes = 0)
+sun_rise = sun_rise + time_offset
 DB_request = """UPDATE horairesLamp
     SET stop_h_morning = """ +str(sun_rise.hour) +""",
         stop_m_morning = """ +str(sun_rise.minute) +"""
@@ -184,6 +159,8 @@ print(cursor_DB.execute(DB_request))
 print('Today Morning Stop date is :' +str(sun_rise))
 
 ## Setting hours for sunset
+time_offset = timedelta(hours = 0, minutes = 20)
+sun_dusk = sun_dusk + time_offset
 DB_request = """UPDATE horairesLamp 
     SET start_h_evening = """ +str(sun_dusk.hour) +""",
         start_m_evening = """ +str(sun_dusk.minute) +"""
@@ -197,9 +174,3 @@ conn_DB.close()
 
 print("__                          __")
 print("  --         END          --  ")
-
-
-
-
-    
-
